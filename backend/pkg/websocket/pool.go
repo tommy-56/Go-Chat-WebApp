@@ -25,7 +25,7 @@ func (pool *Pool) Start() {
 			pool.Clients[client] = true
 			fmt.Println("Size of Connection Pool: ", len(pool.Clients))
 			for client, _ := range pool.Clients {
-				fmt.Println(client)
+				fmt.Println(client.ID)
 				client.Conn.WriteJSON(Message{Type: 1, Body: "New User Joined..."})
 			}
 			break
@@ -39,7 +39,12 @@ func (pool *Pool) Start() {
 		case message := <-pool.Broadcast:
 			fmt.Println("Sending message to all clients in Pool")
 			for client, _ := range pool.Clients {
-				client.Conn.WriteJSON(message)
+				//If not checked the message sent gets resent to sending client
+				//this gives a dublicate message on the senders screen
+				if client.ID != message.Sender {
+					client.Conn.WriteJSON(message)
+				}
+
 			}
 		}
 	}
