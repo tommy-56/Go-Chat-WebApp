@@ -6,6 +6,7 @@ import (
 
 	"github.com/Tommy-56/realtime-chat-go-react/pkg/websocket"
 	"github.com/google/uuid"
+	"github.com/goombaio/namegenerator"
 )
 
 func serveWs(pool *websocket.Pool, w http.ResponseWriter, r *http.Request) {
@@ -14,11 +15,13 @@ func serveWs(pool *websocket.Pool, w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Fprintf(w, "%+v\n", err)
 	}
-	clientID := uuid.New().String()
+	clientID := uuid.New()
+	readableName := namegenerator.NewNameGenerator(int64(clientID.Time())).Generate()
 	client := &websocket.Client{
-		ID:   clientID,
-		Conn: conn,
-		Pool: pool,
+		ID:           clientID.String(),
+		Conn:         conn,
+		Pool:         pool,
+		ReadableName: readableName,
 	}
 
 	pool.Register <- client
@@ -35,7 +38,7 @@ func setupRoutes() {
 }
 
 func main() {
-	fmt.Println("Distributed Chat App v0.01")
+	fmt.Println("Chat App v0.1")
 	setupRoutes()
 	http.ListenAndServe(":8080", nil)
 }

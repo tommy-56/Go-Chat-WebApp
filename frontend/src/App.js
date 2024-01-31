@@ -1,16 +1,20 @@
 import React, { Component } from 'react';
-import Header from './components/Header/Header';
+import { Routes, Route } from "react-router-dom";
+import Login from './components/Login';
 import ChatContainer from './components/ChatContainer';
 import './App.css';
+import { connect, sendMsg } from './api';
 
 class App extends Component {
- 
+  
 
   render() {
     return (
       <div className="App">
-        <Header />
-        <ChatContainer/>
+        <Routes>
+        <Route path="/" element={ <ChatContainer/> } />
+        <Route path="login" element={<Login/>} />
+      </Routes>
       </div>
     );
   }
